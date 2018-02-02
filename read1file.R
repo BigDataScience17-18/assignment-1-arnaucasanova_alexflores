@@ -54,24 +54,39 @@ for (i in 5:length(linn)){
   valuesIndex <- valuesIndex + 1
   }
 }
-length(FP1)
-length(sensors)
+close(conn)
 
-userTable <- "C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/userTable.txt"
 
-conn <- file(userTable, open ="w")
+
+conn <- file("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/userTable.txt", 'a')
+
+
+sensorsRow <- list()
+
 for (i in 1: length(sensors)){
-  text <- "sensors[i]"
-  documentoUser <- writeLines(text, conn)
-
+  sensors[i] <- toString(sensors[i])
 }
-documentoUser <-writeLines("\n", con)
-FP1[1]
-FP1[257]
-FP1[513]
+header <- paste(unlist(sensors), collapse= " ")
+write(header, conn, sep = " ")
+aaux <- 1
+toString(aaux)
+lastString <- ""
+for(i in 1: 256){
+  indexAux <- 0
+  for(j in 1: 64){
+    sensorsRow[j] <- toString(userValues[i+indexAux])
+    indexAux <- indexAux + 256
+  }
+  insertRow <- paste(unlist(sensorsRow), collapse=" ")
+  write(insertRow, conn, sep = " ")
+}
 
-file1
-sensors
+
+file1 <- file.choose()
+df <- read.table(file1, header = TRUE)
+df
+
+close(conn)
 
 
 
