@@ -1,10 +1,17 @@
 install.packages("stringr")
+install.packages("pheatmap")
+require(ggplot2) 
+require(reshape2)
 
 file1 <- file.choose()
 
 #Read first lines of file to acquire necessary information
 
-setwd("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/ARCHIVES")
+
+#Step 3: Data acquisition - Manual download of the full egg tar, using two diferent users, alcoholic and non-alcoholic
+# with 120 trials each
+
+setwd("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/assignmentArchives")
 getwd()
 
 user <- ""
@@ -14,6 +21,8 @@ expType <- ""
 sensors <- list()
 userValues <- list()
 
+
+#Step 4: 
 
 process_file <- function(filename){
   conn <<- file(filename,open="r")
@@ -27,9 +36,6 @@ process_file <- function(filename){
   expTypeA <- str_split_fixed(expTypeA, "#", n=2)
   expTypeA <- expTypeA[2]
   expTypeA <- str_trim(expTypeA, side = c("left"))
-  trialA <- linn[4]
-  trialA <- str_trim(trialA, side = c("left"))
-  
   
   user <<- userAux
   print(user)
@@ -69,24 +75,20 @@ process_file <- function(filename){
 
 connFile <- file("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/userTable.txt", 'a')
 
-
 sensorsRow <- list()
 userInfo <- list()
 userInfo[1] <- "USER"
 userInfo[2] <- "STATE"
 userInfo[3] <- "EXP_TYPE"
 userInfo[4] <- "SAMPLE"
+userInfo[5] <- "TRIAL"
 
+trial
 
-
-
-
-
-
-fileList <- list.files("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/ARCHIVES")
+fileList <- list.files("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/assignmentArchives")
 for (x in 1: length(fileList)){
   connFile <- file("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/userTable.txt", 'a')
-  
+  fileList[x]
   process_file(fileList[x])
   
   if(state == "a"){
@@ -106,11 +108,14 @@ for (x in 1: length(fileList)){
 
   for(i in 1: 256){
     indexAux <- 0
-    for(j in 5: 68){
+    for(j in 6: 69){
       sensorsRow[1] <- user
       sensorsRow[2] <- state
+      expType <- str_replace_all(expType, " ", "")
       sensorsRow[3] <- expType
       sensorsRow[4] <- toString(i)
+      trial <- str_replace_all(trial, " ", "")
+      sensorsRow[5] <- trial
       sensorsRow[j] <- toString(userValues[i+indexAux])
       indexAux <- indexAux + 256
     }
@@ -121,8 +126,50 @@ for (x in 1: length(fileList)){
   
 }
 
-file1 <- file.choose()
-df <- read.table(file1, header = TRUE)
+file1 <- file("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/userTable.txt")
+df <- read.table(file1, header = TRUE, sep = " ")
 df
+
+p <- matrix()
+p <- df
+p
+
+
+
+
+#Step 4: Data exploration
+summary(df)
+pheatmap(t(scale(as.matrix(df))), show_colnames=TRUE)
+
+
+head(df)
+#4.1. Exercise 1 - Represent the 'FP1' channel (first one).
+
+table(df$FP1)
+
+title('EEG reading Uiii Repjjj Paradkkk (Alcoholic')
+xlabel('Time(sec)')
+ylabel('Voltage(mv)')
+ggplot(df, aes(x=SAMPLE, y=FP1)) + geom_point()
+
+
+#4.2. Represent the 'FP1' channel as well as the next three
+
+ggplot(df, aes(x=SAMPLE, y=FP1)) +geom_point()
+  
+ggplot(df, aes(x=SAMPLE, y=FP2))+geom_point() 
+ggplot(df, aes(x=SAMPLE, y=F7))+geom_point() 
+ggplot(df, aes(x=SAMPLE, y=F8))+geom_point()
+
+#4.3. Represent all 64 channels
+
+
+
+
+
+
+
+
+
 
 rm(list = ls())
