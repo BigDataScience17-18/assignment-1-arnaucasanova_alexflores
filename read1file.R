@@ -11,7 +11,7 @@ file1 <- file.choose()
 #Step 3: Data acquisition - Manual download of the full egg tar, using two diferent users, alcoholic and non-alcoholic
 # with 120 trials each
 
-setwd("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/assignmentArchives")
+setwd("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/assignmentArchives/co2a0000447")
 getwd()
 
 user <- ""
@@ -73,8 +73,6 @@ process_file <- function(filename){
   }
 }
 
-connFile <- file("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/userTable.txt", 'a')
-
 sensorsRow <- list()
 userInfo <- list()
 userInfo[1] <- "USER"
@@ -83,11 +81,22 @@ userInfo[3] <- "EXP_TYPE"
 userInfo[4] <- "SAMPLE"
 userInfo[5] <- "TRIAL"
 
-trial
 
-fileList <- list.files("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/assignmentArchives")
-for (x in 1: length(fileList)){
-  connFile <- file("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/userTable.txt", 'a')
+for(q in 1: 3){
+  if (q==1) {
+    setwd("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/assignmentArchives/co2a00004447")
+    fileList <- list.files("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/assignmentArchives/co2a00004447")
+    connFile <- file("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/alcoholicTable.txt", 'a')  
+    } 
+  else{ 
+    setwd("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/assignmentArchives/co2c0000337")
+    fileList <- list.files("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/assignmentArchives/co2c0000337")
+    connFile <- file("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/userTable.txt", 'a')  
+    }
+    
+    
+    for (x in 1: length(fileList)){
+  
   fileList[x]
   process_file(fileList[x])
   
@@ -121,21 +130,21 @@ for (x in 1: length(fileList)){
     }
   insertRow <- paste(unlist(sensorsRow), collapse=" ")
   write(insertRow, connFile, sep = " ")
-}
+  }
+    }
   close(connFile)
-  
 }
 
-file1 <- file("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/userTable.txt")
-df <- read.table(file1, header = TRUE, sep = " ")
-df
+fileA <- file("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/alcoholicTable.txt")
+fileC <- file("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/userTable.txt")
+dfAlc <- read.table(fileA, header = TRUE, sep = " ")
+dfCon <- read.table(fileC, header = TRUE, sep = " ")
+dfAlc
+dfCon
 
 p <- matrix()
 p <- df
 p
-
-
-
 
 #Step 4: Data exploration
 summary(df)
