@@ -1,0 +1,50 @@
+---
+title: "Assignment3"
+author: "Arnau Casanova"
+date: "6 de marzo de 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Get the data
+
+
+```{r get}
+file <- "C:/Users/Usuari/Desktop/BigDataScience/Assignment3/Pressupostos_dels_ens_municipals_de_Catalunya.csv"
+
+df <- read.csv2(file, header = TRUE, sep = ",")
+
+summary(df)
+```
+
+## 2. Keep data from year 2016 and town couincils (ajuntament), or in other words, discard 2017 data and data comming from entities that are not called "Ajuntament"
+
+
+```{r subset}
+
+dfSubset <- df[grep("Ajuntament", df$NOM_COMPLERT), ]
+
+dfSubset <- dfSubset[!grepl("2017", dfSubset$ANY_EXERCICI), ]
+
+
+df <- dfSubset
+summary(df)
+
+```
+
+## 3.Analize the columns and design how will you organize your dataset
+```{r analyze}
+
+#DO SOMETHING
+
+```
+
+## 4.Will you need to transform data in a some way in order to be able to compare different budgets? How
+```{r transform}
+
+#DO SOMETHING
+
+```
