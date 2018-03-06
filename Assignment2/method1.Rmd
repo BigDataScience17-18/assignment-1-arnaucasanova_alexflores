@@ -1,0 +1,67 @@
+---
+title: "Assignment2 - Arnau Casanova & Alex Flores"
+output: html_notebook
+---
+
+
+Define test and train sets after using Feature Engineering, every row in the DF represents the mean of the 256 repetitions of the experiment
+```{r}
+df <- read.table("C:/Users/Usuari/Documents/UNI/4/4_2/BigDataScience/assignment1/bigTable.txt", header=TRUE)
+
+names(df)[1] <- c("UserId")
+names(df)[2] <- c("Alcoholic")
+names(df)[3] <- c("Paradigm")
+names(df)[4] <- c("Channel")
+
+
+
+default_idx <- sample(nrow(df), ceiling(nrow(df) / 2)) 
+default_trn <- df[default_idx, ] 
+default_tst <- df[-default_idx, ]
+
+model_glm <- glm(Alcoholic ~ Paradigm + Channel, data = default_trn, family = "binomial")
+
+summary(model_glm)
+
+head(predict(model_glm, type = "response"))
+
+
+trn_pred <- ifelse(predict(model_glm, type = "response") > 0.5, "1", "0")
+head(trn_pred)
+
+ggplot(aes(y=Alcoholic,x=Channel),data=df)+geom_point()
+
+ggplot(aes(y=Alcoholic,x=Channel),data=df)+geom_point()+ stat_smooth(method="glm",method.args=list(family="binomial"),se=FALSE)
+```
+
+
+
+#Apply the PCA
+
+```{r}
+
+expClass <- factor(df$Paradigm)
+
+#H20 PCA
+#h2o.init()
+
+#eegs.hex = h2o.importFile(path="C:\\Users\\Arnau\\Documents\\BigDataScience\\assignment1\\bigTable.txt")
+
+#eegs.pca = h2o.prcomp(training_frame = eegs.hex, transform = "STANDARDIZE", k = 2)
+#eegs.pca
+
+
+#PCAMethods PCA
+
+#source("https://bioconductor.org/biocLite.R")
+#biocLite("pcaMethods")
+#library(pcaMethods)
+
+eegsPCAmethods <- pca(df[,-1], scale = "uv", center = T, nPcs = 2, method = "svd")
+slplot(eegsPCAmethods, scoresLoadings = c(T,T), scol = expClass)
+summary(eegsPCAmethods)
+
+
+
+```
+
