@@ -1,0 +1,119 @@
+---
+title: "Big Data Science - Assignment 2"
+author: "Arnau Casanova & Alex Flores"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  html_notebook: default
+subtitle: EEG Analysis
+---
+
+Load the dataset
+
+```{r}
+library(data.table)
+library(magrittr)
+
+mydata<-read.table("C:/Users/Arnau/Documents/BigDataScience/assignment1/bigTable.txt", header=TRUE )
+
+```
+
+Check availible variables (predictors)
+```{r}
+colnames(mydata)
+```
+
+
+
+Take a look at the structure
+
+```{r}
+mydata$STATE <-as.factor(mydata$STATE)
+str(mydata)
+```
+Calculate the average of data and calculate the mean of the values
+```{r}
+
+#Convert categorical variables
+library(dummies)
+new_my_data <- dummy.data.frame(mydata, names = c("USER", "STATE", "EXP_TYPE"))
+str(new_my_data)
+```
+PCA
+```{r}
+prin_comp <- prcomp(new_my_data, scale. = T)
+names(prin_comp)
+```
+Mean and sd of variables
+```{r}
+prin_comp$center
+prin_comp$scale
+prin_comp$rotation
+```
+Principal component score vectors in 1729x91 dimension
+```{r}
+dim(prin_comp$x)
+```
+Plot the resultant principal compoents
+```{r}
+biplot(prin_comp, scale = 0)
+```
+Standard deviation of each principal compoent
+```{r}
+std_dev <- prin_comp$sdev
+```
+Variance
+```{r}
+pr_var <- std_dev^2
+```
+Check variance of first 10 components, higher value higher will be the information of these components
+```{r}
+pr_var[1:10]
+```
+Compute the proportion of variance explained by each component. Divide variance by sum total variance:
+```{r}
+prop_varex <- pr_var/sum(pr_var)
+prop_varex[1:20]
+
+```
+1st component 31.9%, 2nd 15.33% and so on. How many components for the modeling? use scree plot to se variability in the data.
+```{r}
+#scree plot
+plot(prop_varex, xlab = "Principal Component",
+             ylab = "Proportion of Variance Explained",
+             type = "b")
+```
+So 30 components explains around 98%variance in the data set. We had 67 predictors at the start, now 30.
+Check the cumulative variance plot to see number of components
+```{r}
+#cumulative scree plot
+plot(cumsum(prop_varex), xlab = "Principal Component",
+              ylab = "Cumulative Proportion of Variance Explained",
+              type = "b")
+```
+We see that 30 components resulta a variance close to 90%
+
+Use the 30 components 
+```{r}
+data2 <- data.frame(Alcoholic = mydata$STATE, prin_comp$x)
+
+#1st 30 PCAs
+data2 <- data2[,1:31]
+
+#decision tree
+library(rpart)
+rpart.model <- rpart(Alcoholic ~ .,data = data2, method = "anova")
+rpart.model
+
+#transform tests into PCA
+test.data <- predict(prin_comp, newdata = new_my_data)
+test.data <- as.data.frame(test.data)
+#30 components
+test.data <- test.data[,1:30]
+
+rpart.prediction <- predict(rpart.model, test.data)
+
+
+```

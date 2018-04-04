@@ -1,0 +1,44 @@
+---
+title: "finalreportNotebook2"
+author: "Arnau Casanova Barjuan"
+date: "3 de abril de 2018"
+output: html_document
+---
+
+# Step 5 - Data Cleaning
+
+##Is our data in tidy format?
+
+The data we have taken wasn't in a tidy format, after the transformation that we applied we can assume that yes, it is in a tidy format, we set the variables in columns, we keep the user observations in rows and we have different metadata in different table, one for alcoholic and one for non-alcoholic, we also have a general table with all the data.
+
+
+##Exercise: Clean the data set
+
+Now we will compute the mean of every channel for every user, so for every experiment that has 256 samples and are 256 will be now just one row with the mean of these 256 values.
+
+This is the dataset with 10 alcoholic and 10 control users prepared to use for the second assigment.
+
+```{r,warning=FALSE,message=FALSE}
+fileGeneral <- file("C:/Users/Arnau/Documents/BigDataScience/assignment1/bigTable.txt")
+df <- read.table(fileGeneral, header = TRUE, sep = " ")
+summary(df)
+
+```
+
+#Now we can compute some plots with the entire dataset
+
+This plots show two random channel of the optimized dataset extracted from 10 alcholic and 10 control users with their full set of experiments.
+
+```{r,warning=FALSE,message=FALSE}
+library(ggplot2)
+
+#FP1 Channel
+ggplot(df, aes(x=FP1, y=USER)) + geom_point()  + facet_grid(. ~ EXP_TYPE)
+
+#F8 Channel
+ggplot(df, aes(x=F8, y=USER)) + geom_point()  + facet_grid(. ~ EXP_TYPE)
+
+
+```
+
+
