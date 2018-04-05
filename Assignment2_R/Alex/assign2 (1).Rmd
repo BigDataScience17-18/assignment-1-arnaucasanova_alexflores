@@ -3,13 +3,15 @@ title: "Big Data Science - Assignment 2"
 author: "Arnau Casanova & Alex Flores"
 date: "`r Sys.Date()`"
 output:
+  html_notebook: default
+  pdf_document: default
   html_document:
     df_print: paged
-  pdf_document: default
-  html_notebook: default
 subtitle: EEG Analysis
 ---
 
+
+PCA
 Load the dataset
 
 ```{r}
@@ -20,7 +22,7 @@ mydata<-read.table("C:/Users/Arnau/Documents/BigDataScience/assignment1/bigTable
 
 ```
 
-Check availible variables (predictors)
+Check available variables (predictors)
 ```{r}
 colnames(mydata)
 ```
@@ -33,7 +35,7 @@ Take a look at the structure
 mydata$STATE <-as.factor(mydata$STATE)
 str(mydata)
 ```
-Calculate the average of data and calculate the mean of the values
+Conversion of categorical variables
 ```{r}
 
 #Convert categorical variables
@@ -84,8 +86,14 @@ prop_varex[1:20]
 plot(prop_varex, xlab = "Principal Component",
              ylab = "Proportion of Variance Explained",
              type = "b")
+
 ```
-So 30 components explains around 98%variance in the data set. We had 67 predictors at the start, now 30.
+So 30 components explains around 80sum% variance in the data set. We had 67 predictors at the start, now 30.
+
+```{r}
+sum(pr_var[1:30])
+```
+
 Check the cumulative variance plot to see number of components
 ```{r}
 #cumulative scree plot
@@ -116,4 +124,31 @@ test.data <- test.data[,1:30]
 rpart.prediction <- predict(rpart.model, test.data)
 
 
+
+
 ```
+
+Logistic regresion:
+Data modification, calculate the mean of every row. It will be the explicative variable and STATE will be the answer (factor). That's X and Y.
+```{r}
+mydata.lr <-  mydata[2]
+mydata.lr[2] <- c("0")
+names (mydata.lr)[2] <- c("MEAN")
+
+mydatanumeric <- mydata
+mydatanumeric$USER <- NULL
+mydatanumeric$STATE <- NULL
+mydatanumeric$EXP_TYPE<- NULL
+
+mymeans <- apply(mydatanumeric, 1, mean)
+
+## filling the dataset with the MEAN values
+for (i in 1:1729){
+  mydata.lr[i,2] <- mymeans[i]
+}
+
+plot(mydata.lr$MEAN, jitter(mydata.lr$STATE, 0.15), pch = 19, xlab = "Means", ylab ="Alcoholic (0 - non, 1 - alcoholic)")
+``` 
+Alcoholic and non alcoholic trend to have the same means. So we can not define a model because there's no significative diference between alcoholic and non alcoholic.
+
+
